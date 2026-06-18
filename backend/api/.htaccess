@@ -1,0 +1,6 @@
+Options -Indexes
+RewriteEngine On
+
+# Redirigir todas las peticiones a index.php conservando el path
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php?path=$1 [QSA,L]

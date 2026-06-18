@@ -1,0 +1,10 @@
+Options -Indexes
+RewriteEngine On
+
+# 1. Rutas del backend: pasar directamente a PHP, sin reescribir
+RewriteRule ^backend/ - [L]
+
+# 2. React SPA: si no es un archivo o directorio físico, servir index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ /index.html [L]

@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-main: 'Space Grotesk', sans-serif;
+
+    --background: 0 0% 100%;
+    --foreground: 210 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 20% 12%;
+
+    --primary: 200 100% 26%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 177 83% 29%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 200 30% 95%;
+    --muted-foreground: 200 15% 40%;
+
+    --accent: 45 100% 51%;
+    --accent-foreground: 210 20% 12%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 200 20% 88%;
+    --input: 200 20% 88%;
+    --ring: 200 100% 26%;
+
+    --radius: 0.75rem;
+
+    --primary-light: 200 60% 94%;
+    --primary-medium: 200 80% 40%;
+    --secondary-light: 177 40% 93%;
+    --gradient-primary: linear-gradient(135deg, hsl(200, 100%, 26%), hsl(177, 83%, 29%));
+    --gradient-text: linear-gradient(135deg, hsl(200, 100%, 26%), hsl(177, 83%, 29%));
+    --gradient-hero: linear-gradient(135deg, hsl(200, 100%, 26%) 0%, hsl(200, 80%, 20%) 50%, hsl(177, 83%, 29%) 100%);
+    --shadow-card: 0 4px 24px -4px hsl(200 100% 26% / 0.08);
+    --shadow-elevated: 0 12px 40px -8px hsl(200 100% 26% / 0.15);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 200 100% 26%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 200 30% 95%;
+    --sidebar-accent-foreground: 200 100% 26%;
+    --sidebar-border: 200 20% 88%;
+    --sidebar-ring: 200 100% 26%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-main antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-main font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-bg {
+    background: var(--gradient-primary);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .section-blue {
+    background-color: hsl(var(--primary-light));
+  }
+
+  .section-teal {
+    background-color: hsl(var(--secondary-light));
+  }
+
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-md border border-border rounded-xl;
+    box-shadow: var(--shadow-card);
+  }
+
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-elevated);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

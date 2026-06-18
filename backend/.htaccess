@@ -1,0 +1,25 @@
+Options -Indexes
+RewriteEngine On
+
+# ── Bloquear archivos sensibles ───────────────────────────────────────────────
+<FilesMatch "\.(env|sql|log|md|sh|bak)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ── Bloquear acceso directo a directorios internos ───────────────────────────
+RewriteRule ^admin(/.*)?$      - [F,L]
+RewriteRule ^security(/.*)?$   - [F,L]
+RewriteRule ^config(/.*)?$     - [F,L]
+RewriteRule ^migrations(/.*)?$ - [F,L]
+
+# ── Bloquear rutas admin típicas que escanean bots ───────────────────────────
+RewriteRule ^(administrator|wp-admin|wp-login\.php|login|dashboard|backend|cpanel|panel|cms|manage)(/.*)?$ - [F,L]
+
+# ── API pública ───────────────────────────────────────────────────────────────
+RewriteRule ^api/(.*)$ api/index.php?path=$1 [QSA,L]
+
+# ── Todo lo demás va al front controller del panel ───────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ panel.php [QSA,L]
