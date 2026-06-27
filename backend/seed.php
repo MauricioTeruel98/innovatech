@@ -337,4 +337,156 @@ seed_collection($db, 'menu_links', 'location, label, url, target, enabled, sort_
     ['social', 'YouTube', '#', '_blank', 1, 2],
 ]);
 
+// ════════════════════════════════════════════════════════════════════════════
+//  InnovaLabs (site = 'labs')
+// ════════════════════════════════════════════════════════════════════════════
+
+// ── Ajustes de contenido de Labs ────────────────────────────────────────────────
+// [section, key, value, type, label, help, sort_order]
+$labsSettings = [
+    ['general', 'site_name', 'InnovaLabs', 'text', 'Nombre del sitio', '', 0],
+    ['general', 'tagline', 'Soluciones Digitales', 'text', 'Bajada de la marca (logo)', '', 1],
+    ['general', 'logo', '', 'image', 'Logo personalizado', 'Vacío = se usa el logo de InnovaLabs por defecto.', 2],
+    ['general', 'logo_alt', 'InnovaLabs', 'text', 'Texto alternativo del logo', '', 3],
+
+    ['navbar', 'services_label', 'Servicios', 'text', 'Menú: Servicios', '', 0],
+    ['navbar', 'solutions_label', 'Soluciones', 'text', 'Menú: Soluciones', '', 1],
+    ['navbar', 'plans_label', 'Planes', 'text', 'Menú: Planes', '', 2],
+    ['navbar', 'contact_label', 'Contacto', 'text', 'Menú: Contacto', '', 3],
+    ['navbar', 'cta_label', 'Cotizar proyecto', 'text', 'Botón de acción (texto)', '', 4],
+    ['navbar', 'cta_url', '#contacto', 'url', 'Botón de acción (enlace)', '', 5],
+
+    ['hero', 'badge_text', 'Desarrollo web & soluciones digitales', 'text', 'Insignia', '', 0],
+    ['hero', 'heading_part1', 'Construimos la web que tu ', 'text', 'Título — primera parte', 'Dejá el espacio final.', 1],
+    ['hero', 'heading_highlight', 'negocio necesita', 'text', 'Título — palabra destacada', 'Con degradado.', 2],
+    ['hero', 'subheading', 'Diseñamos, desarrollamos y mantenemos sitios web, tiendas online y plataformas a medida. Hosting, soporte y todo lo que necesitás, en un solo lugar.', 'textarea', 'Subtítulo', '', 3],
+    ['hero', 'primary_cta_label', 'Cotizar mi proyecto', 'text', 'Botón principal — texto', '', 4],
+    ['hero', 'primary_cta_url', '#contacto', 'url', 'Botón principal — enlace', '', 5],
+    ['hero', 'secondary_cta_label', 'Ver servicios', 'text', 'Botón secundario — texto', '', 6],
+    ['hero', 'secondary_cta_url', '#servicios', 'url', 'Botón secundario — enlace', '', 7],
+    ['hero', 'stat1_value', '+120', 'text', 'Estadística 1 — número', '', 8],
+    ['hero', 'stat1_label', 'Proyectos entregados', 'text', 'Estadística 1 — texto', '', 9],
+    ['hero', 'stat2_value', '99.9%', 'text', 'Estadística 2 — número', '', 10],
+    ['hero', 'stat2_label', 'Uptime de hosting', 'text', 'Estadística 2 — texto', '', 11],
+    ['hero', 'stat3_value', '24/7', 'text', 'Estadística 3 — número', '', 12],
+    ['hero', 'stat3_label', 'Soporte técnico', 'text', 'Estadística 3 — texto', '', 13],
+
+    ['services', 'heading', 'Nuestros', 'text', 'Título — parte normal', '', 0],
+    ['services', 'heading_highlight', 'servicios', 'text', 'Título — palabra destacada', '', 1],
+    ['services', 'subheading', 'Todo lo que tu presencia digital necesita, de principio a fin.', 'textarea', 'Subtítulo', '', 2],
+
+    ['solutions', 'heading', 'Soluciones a', 'text', 'Título — parte normal', '', 0],
+    ['solutions', 'heading_highlight', 'tu medida', 'text', 'Título — palabra destacada', '', 1],
+    ['solutions', 'subheading', 'Desarrollamos el tipo de plataforma que tu proyecto necesita.', 'textarea', 'Subtítulo', '', 2],
+
+    ['process', 'heading', 'Cómo', 'text', 'Título — parte normal', '', 0],
+    ['process', 'heading_highlight', 'trabajamos', 'text', 'Título — palabra destacada', '', 1],
+    ['process', 'subheading', 'Un proceso claro y colaborativo, de la idea al lanzamiento.', 'textarea', 'Subtítulo', '', 2],
+
+    ['features', 'heading', '¿Por qué', 'text', 'Título — parte normal', '', 0],
+    ['features', 'heading_highlight', 'InnovaLabs?', 'text', 'Título — palabra destacada', '', 1],
+    ['features', 'subheading', 'Tecnología moderna, diseño cuidado y soporte real.', 'textarea', 'Subtítulo', '', 2],
+
+    ['plans', 'heading', 'Planes y', 'text', 'Título — parte normal', '', 0],
+    ['plans', 'heading_highlight', 'precios', 'text', 'Título — palabra destacada', '', 1],
+    ['plans', 'subheading', 'Opciones flexibles que se adaptan a cada etapa de tu negocio.', 'textarea', 'Subtítulo', '', 2],
+    ['plans', 'note', '¿Necesitás algo a medida? Escribinos y armamos una propuesta para vos.', 'text', 'Nota al pie de los planes', '', 3],
+
+    ['testimonials', 'heading', 'Lo que dicen nuestros', 'text', 'Título — parte normal', '', 0],
+    ['testimonials', 'heading_highlight', 'clientes', 'text', 'Título — palabra destacada', '', 1],
+
+    ['contact', 'heading', '¿Listo para', 'text', 'Título — parte normal', '', 0],
+    ['contact', 'heading_highlight', 'empezar?', 'text', 'Título — palabra destacada', '', 1],
+    ['contact', 'subheading', 'Contanos sobre tu proyecto y te enviamos una propuesta sin compromiso.', 'textarea', 'Subtítulo', '', 2],
+    ['contact', 'address', 'Tucumán, Argentina', 'text', 'Dirección', '', 3],
+    ['contact', 'email', 'labs@institutoinnovatech.com', 'text', 'Email de contacto (visible)', '', 4],
+    ['contact', 'phone', '+54 381 465 3130', 'text', 'Teléfono', '', 5],
+    ['contact', 'whatsapp', '5493814653130', 'text', 'WhatsApp (solo números, con código de país)', 'Genera el botón de WhatsApp. Vacío = sin botón.', 6],
+    ['contact', 'notification_email', 'labs@institutoinnovatech.com', 'text', 'Email para recibir consultas', '', 7],
+    ['contact', 'success_message', '¡Gracias! Te contactaremos a la brevedad.', 'text', 'Mensaje de confirmación', '', 8],
+    ['contact', 'form_name_label', 'Nombre', 'text', 'Formulario — etiqueta Nombre', '', 9],
+    ['contact', 'form_email_label', 'Email', 'text', 'Formulario — etiqueta Email', '', 10],
+    ['contact', 'form_message_label', 'Contanos sobre tu proyecto', 'text', 'Formulario — etiqueta Mensaje', '', 11],
+    ['contact', 'form_submit_label', 'Enviar consulta', 'text', 'Formulario — texto del botón', '', 12],
+
+    ['footer', 'about_text', 'Estudio de desarrollo web del Instituto InnovaTech. Creamos soluciones digitales modernas para empresas y emprendedores.', 'textarea', 'Descripción del pie', '', 0],
+    ['footer', 'copyright_text', 'InnovaLabs — Instituto InnovaTech. Todos los derechos reservados.', 'text', 'Texto de derechos', 'El año se agrega automáticamente.', 1],
+    ['footer', 'developed_by_label', 'Parte de', 'text', "Texto 'Parte de'", '', 2],
+    ['footer', 'developed_by_name', 'Instituto InnovaTech', 'text', 'Nombre del instituto', '', 3],
+    ['footer', 'parent_url', 'https://institutoinnovatech.com', 'url', 'Enlace al sitio del instituto', '', 4],
+];
+
+$stmt = $db->prepare(
+    "INSERT IGNORE INTO site_settings (site, section, setting_key, setting_value, type, label, help, sort_order)
+     VALUES ('labs', :section, :setting_key, :setting_value, :type, :label, :help, :sort_order)"
+);
+$nLabs = 0;
+foreach ($labsSettings as $s) {
+    $stmt->execute([
+        ':section' => $s[0], ':setting_key' => $s[1], ':setting_value' => $s[2],
+        ':type' => $s[3], ':label' => $s[4], ':help' => $s[5], ':sort_order' => $s[6],
+    ]);
+    $nLabs += $stmt->rowCount();
+}
+echo "[OK]  $nLabs ajustes de Labs insertados (" . count($labsSettings) . " definidos).\n";
+
+// ── Bloques de Labs (servicios, soluciones, proceso, características) ──────────────
+seed_collection($db, 'lab_blocks', 'category, icon, title, description, extra, sort_order', [
+    // Servicios (pillars)
+    ['pillar', 'Code2', 'Desarrollo Web', 'Sitios y aplicaciones web rápidos, seguros y a medida, con las últimas tecnologías.', '', 0],
+    ['pillar', 'Server', 'Hosting Web', 'Alojamiento confiable con certificado SSL, copias de seguridad y 99.9% de uptime.', '', 1],
+    ['pillar', 'Wrench', 'Mantenimiento', 'Actualizaciones, soporte, monitoreo y mejoras continuas para que tu web nunca pare.', '', 2],
+    // Soluciones (solutions)
+    ['solution', 'Rocket', 'Landing Pages', 'Páginas de alto impacto orientadas a conversión para campañas y lanzamientos.', '', 0],
+    ['solution', 'ShoppingCart', 'Tiendas Online', 'Ecommerce completo con pasarelas de pago, gestión de productos y envíos.', '', 1],
+    ['solution', 'Building2', 'Webs Institucionales', 'Sitios corporativos profesionales que transmiten confianza y posicionan tu marca.', '', 2],
+    ['solution', 'GraduationCap', 'Aulas Virtuales', 'Plataformas de e-learning con Moodle para capacitaciones y cursos online.', '', 3],
+    // Proceso (process)
+    ['process', 'Search', 'Análisis', 'Entendemos tu negocio, objetivos y público para definir la mejor solución.', '01', 0],
+    ['process', 'PenTool', 'Diseño', 'Creamos una propuesta visual moderna, alineada a la identidad de tu marca.', '02', 1],
+    ['process', 'Code2', 'Desarrollo', 'Programamos tu plataforma con código limpio, rápido y escalable.', '03', 2],
+    ['process', 'Rocket', 'Lanzamiento', 'Publicamos, optimizamos y te acompañamos con soporte continuo.', '04', 3],
+    // Características (feature)
+    ['feature', 'Smartphone', 'Diseño responsive', 'Se ve perfecto en celulares, tablets y computadoras.', '', 0],
+    ['feature', 'Gauge', 'Velocidad y SEO', 'Optimizado para cargar rápido y posicionar en Google.', '', 1],
+    ['feature', 'ShieldCheck', 'Seguridad', 'SSL, copias de seguridad y buenas prácticas para proteger tu sitio.', '', 2],
+    ['feature', 'Headphones', 'Soporte real', 'Te respondemos rápido, con personas, no con bots.', '', 3],
+]);
+
+// ── Planes de Labs ───────────────────────────────────────────────────────────────
+seed_collection($db, 'lab_plans', 'name, price, period, description, features, highlighted, cta_label, cta_url, sort_order', [
+    ['Landing Page', 'Consultar', 'pago único', 'Ideal para campañas y presencia inicial.',
+        "1 página optimizada\nDiseño responsive\nFormulario de contacto\nSEO básico\nPublicación incluida", 0, 'Cotizar', '#contacto', 0],
+    ['Sitio Profesional', 'Consultar', 'pago único', 'Para empresas que quieren destacar.',
+        "Hasta 6 secciones\nDiseño a medida\nBlog / novedades\nSEO + Analytics\n3 meses de soporte", 1, 'Cotizar', '#contacto', 1],
+    ['Hosting + Mantenimiento', 'Consultar', 'por mes', 'Mantené tu web online y al día.',
+        "Hosting SSD + SSL\nCopias de seguridad\nActualizaciones\nMonitoreo 24/7\nSoporte prioritario", 0, 'Contratar', '#contacto', 2],
+]);
+
+// ── Testimonios de Labs (guardado por sitio, no duplicar) ─────────────────────────
+if ((int) $db->query("SELECT COUNT(*) FROM testimonials WHERE site='labs'")->fetchColumn() === 0) {
+    $t = $db->prepare("INSERT INTO testimonials (site, name, role, quote, rating, sort_order) VALUES ('labs', ?, ?, ?, ?, ?)");
+    foreach ([
+        ['Marcos Giordano', 'Dueño de tienda online', 'Mi ecommerce vende todos los días. El equipo entendió justo lo que necesitaba y lo entregó en tiempo.', 5, 0],
+        ['Lucía Fernández', 'Directora de Marketing', 'La landing que armaron triplicó nuestras conversiones en la campaña. Diseño impecable.', 5, 1],
+        ['Esteban Ríos', 'Coordinador académico', 'El aula virtual en Moodle nos permitió escalar los cursos online sin complicaciones.', 5, 2],
+    ] as $row) { $t->execute($row); }
+    echo "[OK]  3 testimonios de Labs.\n";
+} else {
+    echo "[SKIP] testimonials de Labs ya existen.\n";
+}
+
+// ── Redes de Labs ─────────────────────────────────────────────────────────────────
+if ((int) $db->query("SELECT COUNT(*) FROM menu_links WHERE site='labs'")->fetchColumn() === 0) {
+    $m = $db->prepare("INSERT INTO menu_links (site, location, label, url, target, enabled, sort_order) VALUES ('labs', 'social', ?, ?, '_blank', 1, ?)");
+    foreach ([
+        ['Instagram', '#', 0],
+        ['LinkedIn', '#', 1],
+        ['WhatsApp', 'https://wa.me/5493814653130', 2],
+    ] as $row) { $m->execute($row); }
+    echo "[OK]  3 redes de Labs.\n";
+} else {
+    echo "[SKIP] redes de Labs ya existen.\n";
+}
+
 echo "\nSeed completado.\n";

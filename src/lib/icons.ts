@@ -12,6 +12,8 @@ import {
   BarChart3, PieChart, LineChart, PenTool, Palette, Figma,
   ArrowRight, ArrowUpRight, CheckCircle2, Clock, Calendar,
   MapPin, Mail, Phone, Send, Megaphone,
+  Server, Wrench, ShoppingCart, Search, Gauge, Headphones,
+  LayoutTemplate, MonitorSmartphone, Plug, Network,
   type LucideIcon,
 } from "lucide-react";
 
@@ -25,6 +27,8 @@ export const iconMap: Record<string, LucideIcon> = {
   BarChart3, PieChart, LineChart, PenTool, Palette, Figma,
   ArrowRight, ArrowUpRight, CheckCircle2, Clock, Calendar,
   MapPin, Mail, Phone, Send, Megaphone,
+  Server, Wrench, ShoppingCart, Search, Gauge, Headphones,
+  LayoutTemplate, MonitorSmartphone, Plug, Network,
 };
 
 /**

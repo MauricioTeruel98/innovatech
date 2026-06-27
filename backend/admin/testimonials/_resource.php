@@ -6,6 +6,7 @@ return [
     'singular' => 'testimonio',
     'icon'     => 'bi-chat-quote',
     'order'    => 'sort_order, id',
+    'site_scoped' => true,
     'fields'   => [
         'name'       => ['label' => 'Nombre', 'type' => 'text', 'required' => true, 'list' => true],
         'role'       => ['label' => 'Rol / ocupación', 'type' => 'text', 'list' => true],

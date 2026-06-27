@@ -59,6 +59,48 @@
 }
 
 @layer base {
+  /* ── InnovaLabs: tema oscuro con paleta verde + amarillo ──────────────────────
+     Reutiliza TODO el sistema de clases (gradient-text, glass-card, section-*,
+     gradient-bg/hero) simplemente redefiniendo las variables de color. */
+  .labs-theme {
+    --background: 200 33% 6%;
+    --foreground: 90 15% 93%;
+
+    --card: 200 30% 9%;
+    --card-foreground: 90 15% 93%;
+    --popover: 200 30% 9%;
+    --popover-foreground: 90 15% 93%;
+
+    --primary: 152 72% 42%;          /* verde */
+    --primary-foreground: 160 60% 6%;
+
+    --secondary: 84 72% 48%;         /* verde lima */
+    --secondary-foreground: 160 60% 6%;
+
+    --muted: 200 22% 15%;
+    --muted-foreground: 150 12% 66%;
+
+    --accent: 48 100% 55%;           /* amarillo */
+    --accent-foreground: 160 60% 8%;
+
+    --border: 200 18% 17%;
+    --input: 200 18% 17%;
+    --ring: 152 72% 42%;
+
+    --primary-light: 200 32% 8%;     /* fondos de sección alternos (oscuros) */
+    --primary-medium: 152 72% 42%;
+    --secondary-light: 200 30% 10%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(152, 72%, 40%), hsl(74, 85%, 52%));
+    --gradient-text: linear-gradient(135deg, hsl(152, 72%, 48%), hsl(58, 96%, 56%));
+    --gradient-hero: linear-gradient(135deg, hsl(160, 45%, 9%) 0%, hsl(150, 45%, 12%) 45%, hsl(80, 40%, 13%) 100%);
+    --shadow-card: 0 4px 24px -4px hsl(152 80% 28% / 0.18);
+    --shadow-elevated: 0 16px 48px -8px hsl(152 80% 28% / 0.30);
+
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
   * {
     @apply border-border;
   }

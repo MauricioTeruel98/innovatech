@@ -1,12 +1,14 @@
 <?php
 require_once dirname(__DIR__) . '/includes/auth_guard.php';
 require_once dirname(__DIR__, 2) . '/config/database.php';
+require_once dirname(__DIR__, 2) . '/lib/site_context.php';
 
-$db = getDB();
-$id = (int) ($_GET['id'] ?? 0);
+$db   = getDB();
+$site = current_site();
+$id   = (int) ($_GET['id'] ?? 0);
 
-$stmt = $db->prepare("SELECT id, name FROM contact_messages WHERE id = ?");
-$stmt->execute([$id]);
+$stmt = $db->prepare("SELECT id, name FROM contact_messages WHERE id = ? AND site = ?");
+$stmt->execute([$id, $site]);
 $m = $stmt->fetch();
 
 if (!$m) {
@@ -17,7 +19,7 @@ if (!$m) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm'])) {
     csrf_verify();
-    $db->prepare("DELETE FROM contact_messages WHERE id = ?")->execute([$id]);
+    $db->prepare("DELETE FROM contact_messages WHERE id = ? AND site = ?")->execute([$id, $site]);
     $_SESSION['flash'] = ['type' => 'success', 'msg' => 'Mensaje eliminado.'];
     header('Location: ' . PANEL_URL . '/messages/index.php');
     exit;

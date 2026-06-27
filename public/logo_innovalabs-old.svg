@@ -1,0 +1,38 @@
+<svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="InnovaLabs">
+  <defs>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&amp;display=swap');</style>
+    <linearGradient id="labGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16b364"/>
+      <stop offset="1" stop-color="#ffd21e"/>
+    </linearGradient>
+    <linearGradient id="labLiquid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1fc977"/>
+      <stop offset="1" stop-color="#0e9a57"/>
+    </linearGradient>
+    <clipPath id="beakerClip">
+      <path d="M40 38 L34 106 a10 10 0 0 0 10 10 h42 a10 10 0 0 0 10 -10 L90 38 Z"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#beakerClip)">
+    <path d="M26 82 q9 -7 19 0 t19 0 t19 0 t19 0 V122 H26 Z" fill="url(#labLiquid)"/>
+    <circle cx="54" cy="97" r="3.6" fill="#ffe27a"/>
+    <circle cx="71" cy="103" r="2.6" fill="#fff4c2"/>
+    <circle cx="62" cy="90" r="2.1" fill="#ffe27a"/>
+  </g>
+  <g fill="none" stroke="url(#labGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 38 L34 106 a10 10 0 0 0 10 10 h42 a10 10 0 0 0 10 -10 L90 38"/>
+    <path d="M40 38 q-8 0 -12 5"/>
+    <path d="M45 62 h8" stroke-width="3" opacity="0.85"/>
+    <path d="M44 76 h8" stroke-width="3" opacity="0.85"/>
+  </g>
+  <ellipse cx="65" cy="38" rx="29" ry="7" fill="none" stroke="url(#labGrad)" stroke-width="6"/>
+  <g stroke="#1fc977" stroke-width="2.6" fill="#ffd21e" stroke-linecap="round">
+    <line x1="52" y1="55" x2="64" y2="61"/>
+    <line x1="64" y1="61" x2="78" y2="53"/>
+    <circle cx="52" cy="55" r="3.2"/>
+    <circle cx="64" cy="61" r="3.2"/>
+    <circle cx="78" cy="53" r="3.2"/>
+  </g>
+  <text x="150" y="46" fill="#5fcf97" font-family="'Space Grotesk', sans-serif" font-size="15" font-weight="600" letter-spacing="3.5">SOLUCIONES DIGITALES</text>
+  <text x="146" y="112" font-family="'Space Grotesk', sans-serif" font-size="64" font-weight="700" letter-spacing="-1"><tspan fill="#22c780">Innova</tspan><tspan fill="#ffd21e">Labs</tspan></text>
+</svg>

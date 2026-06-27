@@ -1,12 +1,14 @@
 <?php
 require_once dirname(__DIR__) . '/includes/auth_guard.php';
 require_once dirname(__DIR__, 2) . '/config/database.php';
+require_once dirname(__DIR__, 2) . '/lib/site_context.php';
 
-$db = getDB();
-$id = (int) ($_GET['id'] ?? 0);
+$db   = getDB();
+$site = current_site();
+$id   = (int) ($_GET['id'] ?? 0);
 
-$stmt = $db->prepare("SELECT * FROM contact_messages WHERE id = ?");
-$stmt->execute([$id]);
+$stmt = $db->prepare("SELECT * FROM contact_messages WHERE id = ? AND site = ?");
+$stmt->execute([$id, $site]);
 $m = $stmt->fetch();
 
 if (!$m) {

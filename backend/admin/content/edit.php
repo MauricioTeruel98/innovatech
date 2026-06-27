@@ -4,9 +4,11 @@ require_once dirname(__DIR__, 2) . '/config/database.php';
 require_once dirname(__DIR__, 2) . '/lib/content.php';
 require_once dirname(__DIR__, 2) . '/lib/uploads.php';
 require_once dirname(__DIR__, 2) . '/lib/icons.php';
+require_once dirname(__DIR__, 2) . '/lib/site_context.php';
 
 $db       = getDB();
-$sections = content_sections();
+$site     = current_site();
+$sections = content_sections($site);
 $section  = $_GET['section'] ?? '';
 
 if (!isset($sections[$section])) {
@@ -20,9 +22,9 @@ $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
 
-    // Cargar las filas de la sección para procesarlas.
-    $stmt = $db->prepare("SELECT * FROM site_settings WHERE section = ? ORDER BY sort_order, id");
-    $stmt->execute([$section]);
+    // Cargar las filas de la sección (del sitio activo) para procesarlas.
+    $stmt = $db->prepare("SELECT * FROM site_settings WHERE site = ? AND section = ? ORDER BY sort_order, id");
+    $stmt->execute([$site, $section]);
     $rows = $stmt->fetchAll();
 
     $update = $db->prepare("UPDATE site_settings SET setting_value = ? WHERE id = ?");
@@ -37,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     delete_upload($row['setting_value']);
                     $new = '';
                 } else {
-                    $saved = save_uploaded_image('image_' . $id, $section);
+                    $saved = save_uploaded_image('image_' . $id, $site . '/' . $section);
                     if ($saved !== null) {
                         delete_upload($row['setting_value']); // borrar la anterior
                         $new = $saved;
@@ -52,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update->execute([$new, $id]);
         }
 
-        $_SESSION['flash'] = ['type' => 'success', 'msg' => 'Contenido de “' . content_section_title($section) . '” actualizado.'];
+        $_SESSION['flash'] = ['type' => 'success', 'msg' => 'Contenido de “' . content_section_title($section, $site) . '” actualizado.'];
         header('Location: ' . PANEL_URL . '/content/edit.php?section=' . urlencode($section));
         exit;
 
@@ -62,14 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Cargar filas para mostrar el formulario.
-$stmt = $db->prepare("SELECT * FROM site_settings WHERE section = ? ORDER BY sort_order, id");
-$stmt->execute([$section]);
+$stmt = $db->prepare("SELECT * FROM site_settings WHERE site = ? AND section = ? ORDER BY sort_order, id");
+$stmt->execute([$site, $section]);
 $rows = $stmt->fetchAll();
 
 $flash = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
 
-$pageTitle  = content_section_title($section);
+$pageTitle  = content_section_title($section, $site);
 $activePage = 'content';
 require_once dirname(__DIR__) . '/includes/header.php';
 ?>

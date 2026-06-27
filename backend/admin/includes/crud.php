@@ -20,11 +20,36 @@
 
 require_once __DIR__ . '/../../lib/uploads.php';
 require_once __DIR__ . '/../../lib/icons.php';
+require_once __DIR__ . '/../../lib/site_context.php';
 
 function crud_default($f)
 {
     if (array_key_exists('default', $f)) return $f['default'];
     return $f['type'] === 'bool' ? 0 : '';
+}
+
+/**
+ * Columnas de "alcance" forzadas en este recurso: el sitio activo (si site_scoped)
+ * y cualquier columna fija (res['fixed'], p. ej. category de lab_blocks).
+ * Devuelve un assoc columna => valor.
+ */
+function crud_scope(array $res): array
+{
+    $cols = [];
+    if (!empty($res['site_scoped'])) $cols['site'] = current_site();
+    foreach (($res['fixed'] ?? []) as $k => $v) $cols[$k] = $v;
+    return $cols;
+}
+
+/** Construye "[ AND ]col = ?, ..." y sus parámetros a partir del alcance. */
+function crud_scope_where(array $scope): array
+{
+    $sql = ''; $params = [];
+    foreach ($scope as $col => $val) {
+        $sql .= ($sql === '' ? ' WHERE ' : ' AND ') . "$col = ?";
+        $params[] = $val;
+    }
+    return [$sql, $params];
 }
 
 /** Procesa el POST de alta/edición. Devuelve ['errors'=>[], 'data'=>[]]; redirige en éxito. */
@@ -84,18 +109,24 @@ function crud_process(PDO $db, array $res, ?array $existing): array
 
     if ($errors) return ['errors' => $errors, 'data' => $data];
 
-    $cols = array_keys($res['fields']);
+    $cols  = array_keys($res['fields']);
+    $scope = crud_scope($res);
     if ($id) {
         $set    = implode(', ', array_map(fn($c) => "$c = :$c", $cols));
         $params = [':id' => $id];
         foreach ($cols as $c) $params[":$c"] = $data[$c];
-        $db->prepare("UPDATE {$res['table']} SET $set WHERE id = :id")->execute($params);
+        // Restringir por alcance: no permitir editar registros de otro sitio/categoría.
+        $where = '';
+        foreach ($scope as $col => $val) { $where .= " AND $col = :sc_$col"; $params[":sc_$col"] = $val; }
+        $db->prepare("UPDATE {$res['table']} SET $set WHERE id = :id$where")->execute($params);
         $msg = ucfirst($res['singular']) . ' actualizado correctamente.';
     } else {
-        $ph     = implode(', ', array_map(fn($c) => ":$c", $cols));
-        $params = [];
+        $allCols = array_merge($cols, array_keys($scope));
+        $ph      = implode(', ', array_map(fn($c) => ":$c", $allCols));
+        $params  = [];
         foreach ($cols as $c) $params[":$c"] = $data[$c];
-        $db->prepare("INSERT INTO {$res['table']} (" . implode(', ', $cols) . ") VALUES ($ph)")->execute($params);
+        foreach ($scope as $col => $val) $params[":$col"] = $val;
+        $db->prepare("INSERT INTO {$res['table']} (" . implode(', ', $allCols) . ") VALUES ($ph)")->execute($params);
         $msg = ucfirst($res['singular']) . ' creado correctamente.';
     }
 
@@ -222,7 +253,10 @@ function crud_index(PDO $db, array $res): void
 {
     $pageTitle  = $res['title'];
     $activePage = $res['route'];
-    $rows = $db->query("SELECT * FROM {$res['table']} ORDER BY {$res['order']}")->fetchAll();
+    [$where, $params] = crud_scope_where(crud_scope($res));
+    $stmt = $db->prepare("SELECT * FROM {$res['table']}$where ORDER BY {$res['order']}");
+    $stmt->execute($params);
+    $rows = $stmt->fetchAll();
     $flash = $_SESSION['flash'] ?? null;
     unset($_SESSION['flash']);
 
@@ -293,9 +327,12 @@ function crud_create(PDO $db, array $res): void
 
 function crud_edit(PDO $db, array $res): void
 {
-    $id   = (int) ($_GET['id'] ?? 0);
-    $stmt = $db->prepare("SELECT * FROM {$res['table']} WHERE id = ?");
-    $stmt->execute([$id]);
+    $id    = (int) ($_GET['id'] ?? 0);
+    $sql   = "SELECT * FROM {$res['table']} WHERE id = ?";
+    $params = [$id];
+    foreach (crud_scope($res) as $col => $val) { $sql .= " AND $col = ?"; $params[] = $val; }
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
     $existing = $stmt->fetch();
 
     if (!$existing) {
@@ -314,9 +351,12 @@ function crud_edit(PDO $db, array $res): void
 
 function crud_delete(PDO $db, array $res): void
 {
-    $id   = (int) ($_GET['id'] ?? 0);
-    $stmt = $db->prepare("SELECT * FROM {$res['table']} WHERE id = ?");
-    $stmt->execute([$id]);
+    $id    = (int) ($_GET['id'] ?? 0);
+    $sql   = "SELECT * FROM {$res['table']} WHERE id = ?";
+    $params = [$id];
+    foreach (crud_scope($res) as $col => $val) { $sql .= " AND $col = ?"; $params[] = $val; }
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
     $row = $stmt->fetch();
 
     if (!$row) {
@@ -331,7 +371,10 @@ function crud_delete(PDO $db, array $res): void
         foreach ($res['fields'] as $col => $f) {
             if ($f['type'] === 'image' && !empty($row[$col])) delete_upload($row[$col]);
         }
-        $db->prepare("DELETE FROM {$res['table']} WHERE id = ?")->execute([$id]);
+        $delSql = "DELETE FROM {$res['table']} WHERE id = ?";
+        $delParams = [$id];
+        foreach (crud_scope($res) as $col => $val) { $delSql .= " AND $col = ?"; $delParams[] = $val; }
+        $db->prepare($delSql)->execute($delParams);
         $_SESSION['flash'] = ['type' => 'success', 'msg' => ucfirst($res['singular']) . ' eliminado.'];
         header('Location: ' . PANEL_URL . '/' . $res['route'] . '/index.php');
         exit;

@@ -4,7 +4,7 @@
  * Rutas:
  *   GET  /api/courses          → lista todos los cursos
  *   GET  /api/courses/{slug}   → devuelve un curso por su slug
- *   GET  /api/site             → todo el contenido administrable del sitio
+ *   GET  /api/site[?site=labs] → todo el contenido administrable del sitio
  *   POST /api/contact          → recibe un mensaje del formulario de contacto
  */
 
@@ -22,8 +22,7 @@ if (in_array($origin, CORS_ORIGINS)) {
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json; charset=utf-8');
-// El contenido es dinámico (editable desde el panel): evitar caché del navegador
-// para que los cambios se vean al recargar.
+// El contenido es dinámico (editable desde el panel): evitar caché del navegador.
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -68,14 +67,16 @@ if ($method === 'GET' && str_starts_with($path, 'courses/')) {
     exit;
 }
 
-// GET /site  → todo el contenido administrable
+// GET /site  → todo el contenido administrable (institute | labs)
 if ($method === 'GET' && $path === 'site') {
-    $db = getDB();
+    $db   = getDB();
+    $site = (($_GET['site'] ?? 'institute') === 'labs') ? 'labs' : 'institute';
 
     // Ajustes agrupados por sección. Las imágenes se devuelven como URL absoluta.
     $settings = [];
-    $rows = $db->query("SELECT section, setting_key, setting_value, type FROM site_settings ORDER BY section, sort_order")->fetchAll();
-    foreach ($rows as $r) {
+    $st = $db->prepare("SELECT section, setting_key, setting_value, type FROM site_settings WHERE site = ? ORDER BY section, sort_order");
+    $st->execute([$site]);
+    foreach ($st->fetchAll() as $r) {
         $val = $r['setting_value'];
         if ($r['type'] === 'image') {
             $val = ($val === null || $val === '') ? '' : upload_url($val);
@@ -85,16 +86,10 @@ if ($method === 'GET' && $path === 'site') {
         $settings[$r['section']][$r['setting_key']] = $val;
     }
 
-    // Equipo
-    $team = $db->query("SELECT name, role, initials, photo_path, linkedin_url FROM team_members WHERE active = 1 ORDER BY sort_order, id")->fetchAll();
-    foreach ($team as &$t) {
-        $t['photo'] = upload_url($t['photo_path']);
-        unset($t['photo_path']);
-    }
-    unset($t);
-
-    // Testimonios
-    $testimonials = $db->query("SELECT name, role, quote, rating, photo_path FROM testimonials WHERE active = 1 ORDER BY sort_order, id")->fetchAll();
+    // Testimonios (del sitio).
+    $tStmt = $db->prepare("SELECT name, role, quote, rating, photo_path FROM testimonials WHERE active = 1 AND site = ? ORDER BY sort_order, id");
+    $tStmt->execute([$site]);
+    $testimonials = $tStmt->fetchAll();
     foreach ($testimonials as &$t) {
         $t['rating'] = (int) $t['rating'];
         $t['photo']  = upload_url($t['photo_path']);
@@ -102,19 +97,56 @@ if ($method === 'GET' && $path === 'site') {
     }
     unset($t);
 
-    // Valores (Sobre nosotros)
-    $values = $db->query("SELECT icon, title, description FROM about_values WHERE active = 1 ORDER BY sort_order, id")->fetchAll();
-
-    // Modalidades
-    $modalities = $db->query("SELECT icon, title, description FROM course_modalities WHERE active = 1 ORDER BY sort_order, id")->fetchAll();
-
-    // Menús
-    $menuRows = $db->query("SELECT location, label, url, target, enabled FROM menu_links ORDER BY location, sort_order, id")->fetchAll();
+    // Menús / redes (del sitio).
+    $mStmt = $db->prepare("SELECT location, label, url, target, enabled FROM menu_links WHERE site = ? ORDER BY location, sort_order, id");
+    $mStmt->execute([$site]);
     $menu = [];
-    foreach ($menuRows as $m) {
+    foreach ($mStmt->fetchAll() as $m) {
         $m['enabled'] = (bool) $m['enabled'];
         $menu[$m['location']][] = $m;
     }
+
+    if ($site === 'labs') {
+        // Bloques agrupados por categoría.
+        $bStmt = $db->prepare("SELECT category, icon, title, description, extra FROM lab_blocks WHERE active = 1 AND site = 'labs' ORDER BY sort_order, id");
+        $bStmt->execute();
+        $blocks = ['pillar' => [], 'solution' => [], 'process' => [], 'feature' => []];
+        foreach ($bStmt->fetchAll() as $b) {
+            $cat = $b['category'];
+            if (!isset($blocks[$cat])) $blocks[$cat] = [];
+            $blocks[$cat][] = ['icon' => $b['icon'], 'title' => $b['title'], 'description' => $b['description'], 'extra' => $b['extra']];
+        }
+
+        // Planes.
+        $pStmt = $db->prepare("SELECT name, price, period, description, features, highlighted, cta_label, cta_url FROM lab_plans WHERE active = 1 AND site = 'labs' ORDER BY sort_order, id");
+        $pStmt->execute();
+        $plans = [];
+        foreach ($pStmt->fetchAll() as $p) {
+            $p['highlighted'] = (bool) $p['highlighted'];
+            $p['features'] = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $p['features'] ?? ''))));
+            $plans[] = $p;
+        }
+
+        echo json_encode(['data' => [
+            'settings'     => $settings,
+            'services'     => $blocks['pillar'],
+            'solutions'    => $blocks['solution'],
+            'process'      => $blocks['process'],
+            'features'     => $blocks['feature'],
+            'plans'        => $plans,
+            'testimonials' => $testimonials,
+            'menu'         => $menu,
+        ]], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    // ── Sitio del Instituto ─────────────────────────────────────────────────────
+    $team = $db->query("SELECT name, role, initials, photo_path, linkedin_url FROM team_members WHERE active = 1 ORDER BY sort_order, id")->fetchAll();
+    foreach ($team as &$tm) { $tm['photo'] = upload_url($tm['photo_path']); unset($tm['photo_path']); }
+    unset($tm);
+
+    $values     = $db->query("SELECT icon, title, description FROM about_values WHERE active = 1 ORDER BY sort_order, id")->fetchAll();
+    $modalities = $db->query("SELECT icon, title, description FROM course_modalities WHERE active = 1 ORDER BY sort_order, id")->fetchAll();
 
     echo json_encode(['data' => [
         'settings'     => $settings,
@@ -131,11 +163,10 @@ if ($method === 'GET' && $path === 'site') {
 if ($method === 'POST' && $path === 'contact') {
     $db = getDB();
 
-    // Aceptar JSON o form-urlencoded
     $body = json_decode(file_get_contents('php://input'), true);
     if (!is_array($body)) $body = $_POST;
 
-    // Honeypot anti-spam (campo oculto que un humano no completa)
+    // Honeypot anti-spam.
     if (!empty($body['website'])) {
         echo json_encode(['data' => ['ok' => true]], JSON_UNESCAPED_UNICODE);
         exit;
@@ -144,6 +175,7 @@ if ($method === 'POST' && $path === 'contact') {
     $name    = trim((string) ($body['name'] ?? ''));
     $email   = trim((string) ($body['email'] ?? ''));
     $message = trim((string) ($body['message'] ?? ''));
+    $site    = (($body['site'] ?? 'institute') === 'labs') ? 'labs' : 'institute';
 
     $errors = [];
     if ($name === '' || mb_strlen($name) > 150)        $errors[] = 'Nombre inválido.';
@@ -159,7 +191,7 @@ if ($method === 'POST' && $path === 'contact') {
     $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '';
     $ip = trim(explode(',', $ip)[0]);
 
-    // Límite anti-spam: máximo 3 mensajes por IP cada 10 minutos.
+    // Anti-spam: máximo 3 mensajes por IP cada 10 minutos.
     $check = $db->prepare("SELECT COUNT(*) FROM contact_messages WHERE ip = ? AND created_at > (NOW() - INTERVAL 10 MINUTE)");
     $check->execute([$ip]);
     if ((int) $check->fetchColumn() >= 3) {
@@ -168,10 +200,10 @@ if ($method === 'POST' && $path === 'contact') {
         exit;
     }
 
-    // 1) Guardar el mensaje en la base de datos (prioridad: nunca se pierde).
+    // 1) Guardar el mensaje (prioridad).
     try {
-        $stmt = $db->prepare("INSERT INTO contact_messages (name, email, message, ip) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$name, $email, $message, $ip]);
+        $stmt = $db->prepare("INSERT INTO contact_messages (site, name, email, message, ip) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$site, $name, $email, $message, $ip]);
     } catch (\Throwable $e) {
         log_error('contact_db', 'No se pudo guardar el mensaje de ' . $email . ': ' . $e->getMessage());
         http_response_code(500);
@@ -180,24 +212,21 @@ if ($method === 'POST' && $path === 'contact') {
     }
 
     // 2) Notificación por email (best-effort): si falla, se registra y se continúa.
-    //    El mensaje ya quedó guardado, así que la respuesta es exitosa igualmente.
-    $notifyStmt = $db->prepare("SELECT setting_value FROM site_settings WHERE section = 'contact' AND setting_key = 'notification_email'");
-    $notifyStmt->execute();
+    $notifyStmt = $db->prepare("SELECT setting_value FROM site_settings WHERE site = ? AND section = 'contact' AND setting_key = 'notification_email'");
+    $notifyStmt->execute([$site]);
     $notify = trim((string) $notifyStmt->fetchColumn());
 
     if (!$notify || !filter_var($notify, FILTER_VALIDATE_EMAIL)) {
-        log_error('contact_mail', "Email de notificación no configurado o inválido ('$notify'); el mensaje de $email se guardó igualmente.");
+        log_error('contact_mail', "[$site] Email de notificación no configurado o inválido ('$notify'); el mensaje de $email se guardó igualmente.");
     } else {
-        $subject = '=?UTF-8?B?' . base64_encode('[InnovaTech] Nuevo mensaje de contacto') . '?=';
-        $bodyTxt = "Nombre: $name\nEmail: $email\nIP: $ip\n\nMensaje:\n$message\n";
+        $subject = '=?UTF-8?B?' . base64_encode("[$site] Nuevo mensaje de contacto") . '?=';
+        $bodyTxt = "Sitio: $site\nNombre: $name\nEmail: $email\nIP: $ip\n\nMensaje:\n$message\n";
         $host    = preg_replace('/[^a-zA-Z0-9.\-]/', '', $_SERVER['HTTP_HOST'] ?? 'institutoinnovatech.com');
         $headers = "From: no-reply@$host\r\n"
                  . 'Reply-To: ' . str_replace(["\r", "\n"], '', $email) . "\r\n"
                  . "Content-Type: text/plain; charset=utf-8\r\n";
-
         $mailOk = false;
         try {
-            // El @ evita que una advertencia de mail() corrompa el JSON de respuesta.
             $mailOk = @mail($notify, $subject, $bodyTxt, $headers);
         } catch (\Throwable $e) {
             log_error('contact_mail', "Excepción al enviar email a $notify: " . $e->getMessage());
@@ -208,8 +237,8 @@ if ($method === 'POST' && $path === 'contact') {
     }
 
     // 3) Respuesta de éxito.
-    $msgStmt = $db->prepare("SELECT setting_value FROM site_settings WHERE section = 'contact' AND setting_key = 'success_message'");
-    $msgStmt->execute();
+    $msgStmt = $db->prepare("SELECT setting_value FROM site_settings WHERE site = ? AND section = 'contact' AND setting_key = 'success_message'");
+    $msgStmt->execute([$site]);
     $okMsg = trim((string) $msgStmt->fetchColumn()) ?: '¡Gracias por contactarnos!';
 
     echo json_encode(['data' => ['ok' => true, 'message' => $okMsg]], JSON_UNESCAPED_UNICODE);

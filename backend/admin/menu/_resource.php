@@ -6,6 +6,7 @@ return [
     'singular' => 'enlace',
     'icon'     => 'bi-link-45deg',
     'order'    => 'location, sort_order, id',
+    'site_scoped' => true,
     'fields'   => [
         'location' => [
             'label' => 'Ubicación', 'type' => 'select', 'required' => true, 'list' => true,

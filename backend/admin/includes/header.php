@@ -1,9 +1,15 @@
 <?php
-// Contador de mensajes sin leer para la insignia del menú (defensivo).
+require_once __DIR__ . '/../../lib/site_context.php';
+$site     = current_site();
+$siteInfo = admin_sites()[$site];
+
+// Contador de mensajes sin leer (del sitio activo) para la insignia del menú.
 $unreadCount = 0;
 if (function_exists('getDB')) {
     try {
-        $unreadCount = (int) getDB()->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0")->fetchColumn();
+        $st = getDB()->prepare("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0 AND site = ?");
+        $st->execute([$site]);
+        $unreadCount = (int) $st->fetchColumn();
     } catch (Throwable $e) {
         $unreadCount = 0;
     }
@@ -101,6 +107,26 @@ if (function_exists('getDB')) {
             margin-right: 5px;
             vertical-align: middle;
         }
+        .logo-dot.labs { background: linear-gradient(135deg, #16b364, #ffd21e); }
+
+        /* Switch de sitio (Instituto / Labs) */
+        .site-switch {
+            display: inline-flex;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3px;
+            gap: 2px;
+        }
+        .site-switch a {
+            font-size: 0.76rem; font-weight: 600;
+            color: #8cb8d4; text-decoration: none;
+            padding: 4px 14px; border-radius: 16px;
+            transition: all 0.15s;
+        }
+        .site-switch a:hover { color: #fff; }
+        .site-switch a.active { background: var(--gradient); color: #fff; }
+        .site-switch a.active.labs { background: linear-gradient(135deg, #16b364, #ffd21e); color: #06210f; }
 
         .sidebar-nav { padding: 16px 12px; flex: 1; }
 
@@ -413,8 +439,8 @@ if (function_exists('getDB')) {
 <!-- Sidebar -->
 <aside class="sidebar">
     <div class="sidebar-brand">
-        <div class="brand-name"><span class="logo-dot"></span>Innova<strong>Tech</strong></div>
-        <div class="brand-sub">Panel de administración</div>
+        <div class="brand-name"><span class="logo-dot <?= $site === 'labs' ? 'labs' : '' ?>"></span>Innova<strong><?= $site === 'labs' ? 'Labs' : 'Tech' ?></strong></div>
+        <div class="brand-sub"><?= $site === 'labs' ? 'Panel · InnovaLabs' : 'Panel de administración' ?></div>
     </div>
 
     <nav class="sidebar-nav">
@@ -431,13 +457,23 @@ if (function_exists('getDB')) {
 
         <div class="nav-label" style="margin-top:12px">Contenido</div>
         <?php
-        $navItem('content',      PANEL_URL . '/content/index.php',      'bi-pencil-square', 'Contenido del sitio');
-        $navItem('courses',      PANEL_URL . '/courses/index.php',      'bi-mortarboard',   'Cursos');
-        $navItem('modalities',   PANEL_URL . '/modalities/index.php',   'bi-grid-3x3-gap',  'Modalidades');
-        $navItem('values',       PANEL_URL . '/values/index.php',       'bi-award',         'Valores');
-        $navItem('team',         PANEL_URL . '/team/index.php',         'bi-people',        'Equipo');
-        $navItem('testimonials', PANEL_URL . '/testimonials/index.php', 'bi-chat-quote',    'Testimonios');
-        $navItem('menu',         PANEL_URL . '/menu/index.php',         'bi-link-45deg',    'Menús y redes');
+        $navItem('content', PANEL_URL . '/content/index.php', 'bi-pencil-square', 'Contenido del sitio');
+        if ($site === 'labs') {
+            $navItem('services',     PANEL_URL . '/services/index.php',     'bi-grid-1x2',    'Servicios');
+            $navItem('solutions',    PANEL_URL . '/solutions/index.php',    'bi-boxes',       'Soluciones');
+            $navItem('process',      PANEL_URL . '/process/index.php',      'bi-diagram-3',   'Proceso');
+            $navItem('features',     PANEL_URL . '/features/index.php',     'bi-patch-check', 'Características');
+            $navItem('plans',        PANEL_URL . '/plans/index.php',        'bi-tags',        'Planes');
+            $navItem('testimonials', PANEL_URL . '/testimonials/index.php', 'bi-chat-quote',  'Testimonios');
+            $navItem('menu',         PANEL_URL . '/menu/index.php',         'bi-link-45deg',  'Redes');
+        } else {
+            $navItem('courses',      PANEL_URL . '/courses/index.php',      'bi-mortarboard',  'Cursos');
+            $navItem('modalities',   PANEL_URL . '/modalities/index.php',   'bi-grid-3x3-gap', 'Modalidades');
+            $navItem('values',       PANEL_URL . '/values/index.php',       'bi-award',        'Valores');
+            $navItem('team',         PANEL_URL . '/team/index.php',         'bi-people',       'Equipo');
+            $navItem('testimonials', PANEL_URL . '/testimonials/index.php', 'bi-chat-quote',   'Testimonios');
+            $navItem('menu',         PANEL_URL . '/menu/index.php',         'bi-link-45deg',   'Menús y redes');
+        }
         ?>
 
         <div class="nav-label" style="margin-top:12px">Comunicación</div>
@@ -465,9 +501,15 @@ if (function_exists('getDB')) {
 <div class="main-wrap">
     <header class="topbar">
         <h1 class="page-title"><?= htmlspecialchars($pageTitle ?? 'Admin') ?></h1>
-        <div class="admin-badge">
-            <i class="bi bi-person-circle"></i>
-            <?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?>
+        <div class="d-flex align-items-center gap-3">
+            <div class="site-switch" title="Cambiar de sitio a administrar">
+                <a href="<?= PANEL_URL ?>/switch_site.php?to=institute" class="<?= $site === 'institute' ? 'active' : '' ?>">Instituto</a>
+                <a href="<?= PANEL_URL ?>/switch_site.php?to=labs" class="<?= $site === 'labs' ? 'active labs' : '' ?>">Labs</a>
+            </div>
+            <div class="admin-badge">
+                <i class="bi bi-person-circle"></i>
+                <?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?>
+            </div>
         </div>
     </header>
     <main class="content-area">

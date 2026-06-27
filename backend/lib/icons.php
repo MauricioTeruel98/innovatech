@@ -22,6 +22,9 @@ function icon_options(): array
         // Acción / contacto
         'ArrowRight', 'ArrowUpRight', 'CheckCircle2', 'Clock', 'Calendar',
         'MapPin', 'Mail', 'Phone', 'Send', 'Megaphone',
+        // Servicios web / Labs
+        'Server', 'Wrench', 'ShoppingCart', 'Search', 'Gauge', 'Headphones',
+        'LayoutTemplate', 'MonitorSmartphone', 'Plug', 'Network',
     ];
 }
 

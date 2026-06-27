@@ -1,5 +1,6 @@
 import type { Course } from "@/data/courses";
 import type { SiteContent } from "@/data/siteContent";
+import type { LabsContent } from "@/data/labsContent";
 
 const BASE = import.meta.env.VITE_API_URL ?? "http://localhost/innova-backend/api";
 
@@ -43,11 +44,17 @@ export async function getSiteContent(): Promise<SiteContent> {
   return fetchJSON<SiteContent>("site");
 }
 
+// ── Contenido de InnovaLabs ─────────────────────────────────────────────────────
+export async function getLabsContent(): Promise<LabsContent> {
+  return fetchJSON<LabsContent>("site?site=labs");
+}
+
 // ── Formulario de contacto ─────────────────────────────────────────────────────
 export interface ContactPayload {
   name: string;
   email: string;
   message: string;
+  site?: string;    // "institute" (por defecto) | "labs"
   website?: string; // honeypot anti-spam (debe ir vacío)
 }
 

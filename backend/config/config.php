@@ -42,5 +42,8 @@ define('CORS_ORIGINS', array_values(array_filter([
     'http://localhost:8080',
     'http://localhost:3000',
     'http://localhost:5173',
+    'https://institutoinnovatech.com',
+    'https://www.institutoinnovatech.com',
+    'https://labs.institutoinnovatech.com',
     $_corsExtra ?: null,
 ])));

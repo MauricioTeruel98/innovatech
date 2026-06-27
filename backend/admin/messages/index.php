@@ -1,12 +1,16 @@
 <?php
 require_once dirname(__DIR__) . '/includes/auth_guard.php';
 require_once dirname(__DIR__, 2) . '/config/database.php';
+require_once dirname(__DIR__, 2) . '/lib/site_context.php';
 
 $pageTitle  = 'Mensajes';
 $activePage = 'messages';
 
-$db       = getDB();
-$messages = $db->query("SELECT * FROM contact_messages ORDER BY created_at DESC")->fetchAll();
+$db    = getDB();
+$site  = current_site();
+$stmt  = $db->prepare("SELECT * FROM contact_messages WHERE site = ? ORDER BY created_at DESC");
+$stmt->execute([$site]);
+$messages = $stmt->fetchAll();
 
 $flash = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
