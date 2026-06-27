@@ -26,3 +26,8 @@ dist-ssr
 .env
 
 backend/.env
+
+# Driver local de Herd/Valet (solo desarrollo; producción usa Apache + .htaccess)
+LocalValetDriver.php
+
+/.claude
