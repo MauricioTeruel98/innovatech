@@ -432,9 +432,40 @@ if (function_exists('getDB')) {
             .sidebar { transform: translateX(-100%); }
             .main-wrap { margin-left: 0; }
         }
+
+        /* ── Paleta InnovaLabs (verde + amarillo) para no confundir con el Instituto ── */
+        body.site-labs {
+            --primary:      #16b364;
+            --primary-dark: #0e8a4d;
+            --secondary:    #a3e635;
+            --gradient:     linear-gradient(135deg, #16b364 0%, #5ca80a 100%);
+
+            --bg-base:    #07140e;
+            --sidebar-bg: #0a1a12;
+            --surface:    #0e2018;
+            --surface2:   #123024;
+            --border:     #1c3a2b;
+            --text:       #e3f5ea;
+            --text-muted: #6fa588;
+        }
+        /* Colores de acento literales (no estaban en variables) */
+        body.site-labs .sidebar-brand .brand-sub { color: #7bd88f; }
+        body.site-labs .nav-item a { color: #9fd9b4; }
+        body.site-labs .nav-item a.active { box-shadow: 0 4px 14px rgba(22,179,100,0.40); }
+        body.site-labs .topbar .admin-badge { color: #7bd88f; }
+        body.site-labs .stat-card .stat-icon { background: rgba(22,179,100,0.18); color: #5fd699; }
+        body.site-labs .data-table .table { --bs-table-hover-bg: rgba(22,179,100,0.10) !important; }
+        body.site-labs .data-table tbody tr:hover td { background: rgba(22,179,100,0.10) !important; }
+        body.site-labs .badge-tag { background: rgba(22,179,100,0.20); color: #7bd88f; border-color: rgba(22,179,100,0.35); }
+        body.site-labs .form-label { color: #aedcc1; }
+        body.site-labs .form-control:focus,
+        body.site-labs .form-select:focus { box-shadow: 0 0 0 3px rgba(22,179,100,0.25) !important; }
+        body.site-labs .btn-edit { background: rgba(22,179,100,0.20); color: #7bd88f; }
+        body.site-labs .btn-edit:hover { background: rgba(22,179,100,0.40); color: #fff; }
+        body.site-labs .btn-outline-light:hover { background: var(--surface2) !important; color: #fff !important; border-color: var(--primary) !important; }
     </style>
 </head>
-<body>
+<body class="<?= $site === 'labs' ? 'site-labs' : '' ?>">
 
 <!-- Sidebar -->
 <aside class="sidebar">
