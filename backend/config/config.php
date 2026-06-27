@@ -28,6 +28,14 @@ define('PANEL_URL',  APP_URL . '/' . PANEL_PATH);
 
 define('MIGRATIONS_DIR', dirname(__DIR__) . '/migrations');
 
+// ── Subida de archivos (imágenes administrables) ───────────────────────────────
+// Carpeta física donde se guardan las imágenes subidas desde el panel.
+// Vive dentro de backend/ para que sea servible por Apache (prod) y por el
+// LocalValetDriver (Herd local). NO usar dist/ ni public/ (son del build de Vite).
+define('UPLOADS_DIR', dirname(__DIR__) . '/uploads');
+// URL pública absoluta de esa carpeta (se sirve en /backend/uploads/<archivo>).
+define('UPLOADS_URL', APP_URL . '/uploads');
+
 // ── CORS para la API pública ───────────────────────────────────────────────────
 $_corsExtra = $_ENV['CORS_ORIGIN'] ?? '';
 define('CORS_ORIGINS', array_values(array_filter([

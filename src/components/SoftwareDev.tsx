@@ -1,7 +1,14 @@
-import { Code2, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Code2 } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import { getIcon } from "@/lib/icons";
+import SmartLink from "./SmartLink";
 
 const SoftwareDev = () => {
+  const { settings } = useSiteContent();
+  const s = settings.softwaredev;
+  const Icon = getIcon(s.icon, Code2);
+
   return (
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4">
@@ -10,24 +17,20 @@ const SoftwareDev = () => {
           <div className="relative z-10 max-w-2xl">
             <ScrollReveal>
               <div className="w-14 h-14 rounded-xl bg-primary-foreground/10 flex items-center justify-center mb-6">
-                <Code2 className="w-7 h-7 text-primary-foreground" />
+                <Icon className="w-7 h-7 text-primary-foreground" />
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-                Desarrollo de Software a medida
+                {s.heading}
               </h2>
               <p className="text-primary-foreground/70 text-lg mb-8 leading-relaxed">
-                Además de la formación, ofrecemos servicios profesionales de desarrollo de software. 
-                Creamos soluciones digitales personalizadas para tu negocio: aplicaciones web, móviles, 
-                sistemas de gestión y más.
+                {s.description}
               </p>
-              <a
-                href="https://example.com"
-                target="_blank"
-                rel="noopener noreferrer"
+              <SmartLink
+                to={s.cta_url}
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-primary-foreground text-primary font-semibold hover:bg-primary-foreground/90 transition-colors"
               >
-                Conocer más <ArrowUpRight className="w-4 h-4" />
-              </a>
+                {s.cta_label} <ArrowUpRight className="w-4 h-4" />
+              </SmartLink>
             </ScrollReveal>
           </div>
         </div>

@@ -1,0 +1,10 @@
+# Carpeta de imágenes subidas desde el panel.
+# Se sirven como archivos estáticos, pero NUNCA se ejecuta código en ella.
+Options -Indexes -ExecCGI
+
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|pht|phar|cgi|pl|py|sh)$">
+    Require all denied
+</FilesMatch>
+
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .pht .phar
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .pht .phar

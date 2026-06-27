@@ -31,3 +31,9 @@ backend/.env
 LocalValetDriver.php
 
 /.claude
+
+# Imágenes subidas desde el panel (contenido de runtime). Se conservan la
+# carpeta y su configuración, pero no los archivos cargados por el usuario.
+backend/uploads/*
+!backend/uploads/.gitkeep
+!backend/uploads/.htaccess

@@ -1,4 +1,4 @@
-import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import {
   Carousel,
@@ -7,23 +7,19 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
-
-const testimonials = [
-  { name: "María González", role: "Desarrolladora Web", text: "Gracias a Innova Tech pude hacer la transición a tecnología. Los cursos son prácticos y los instructores excelentes." },
-  { name: "Carlos Méndez", role: "Data Analyst", text: "La calidad del contenido y el acompañamiento de los profesores superaron mis expectativas. 100% recomendado." },
-  { name: "Laura Fernández", role: "UX Designer", text: "Empecé sin conocimientos técnicos y hoy trabajo en lo que me apasiona. El instituto me dio las herramientas que necesitaba." },
-  { name: "Diego Ramírez", role: "Cloud Engineer", text: "El curso de DevOps me permitió certificarme y conseguir un ascenso en menos de 6 meses. Totalmente vale la pena." },
-  { name: "Ana Torres", role: "Data Scientist", text: "Python para Ciencia de Datos cambió mi carrera. Los proyectos prácticos me dieron la confianza para aplicar a empresas top." },
-];
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 const Testimonials = () => {
+  const { settings, testimonials } = useSiteContent();
+  const s = settings.testimonials;
+
   return (
     <section className="py-24 section-teal">
       <div className="container mx-auto px-4">
         <ScrollReveal>
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Lo que dicen nuestros <span className="gradient-text">estudiantes</span>
+              {s.heading} <span className="gradient-text">{s.heading_highlight}</span>
             </h2>
           </div>
         </ScrollReveal>
@@ -31,22 +27,30 @@ const Testimonials = () => {
         <ScrollReveal>
           <Carousel opts={{ align: "start", loop: true }} className="w-full max-w-5xl mx-auto">
             <CarouselContent className="-ml-4">
-              {testimonials.map((t) => (
-                <CarouselItem key={t.name} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                  <div className="glass-card p-8 hover-lift h-full flex flex-col">
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(5)].map((_, j) => (
-                        <Star key={j} className="w-4 h-4 fill-accent text-accent" />
-                      ))}
+              {testimonials.map((t, idx) => {
+                const stars = Math.max(0, Math.min(5, t.rating || 5));
+                return (
+                  <CarouselItem key={`${t.name}-${idx}`} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                    <div className="glass-card p-8 hover-lift h-full flex flex-col">
+                      <div className="flex gap-1 mb-4">
+                        {[...Array(stars)].map((_, j) => (
+                          <Star key={j} className="w-4 h-4 fill-accent text-accent" />
+                        ))}
+                      </div>
+                      <p className="text-muted-foreground mb-6 flex-1 italic">"{t.quote}"</p>
+                      <div className="flex items-center gap-3">
+                        {t.photo && (
+                          <img src={t.photo} alt={t.name} className="w-10 h-10 rounded-full object-cover" />
+                        )}
+                        <div>
+                          <p className="font-semibold text-foreground">{t.name}</p>
+                          <p className="text-sm text-muted-foreground">{t.role}</p>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-muted-foreground mb-6 flex-1 italic">"{t.text}"</p>
-                    <div>
-                      <p className="font-semibold text-foreground">{t.name}</p>
-                      <p className="text-sm text-muted-foreground">{t.role}</p>
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
+                  </CarouselItem>
+                );
+              })}
             </CarouselContent>
             <CarouselPrevious className="hidden md:flex" />
             <CarouselNext className="hidden md:flex" />

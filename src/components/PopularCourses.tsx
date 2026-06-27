@@ -2,9 +2,12 @@ import { Link } from "react-router-dom";
 import { Clock, Users, ArrowRight, TrendingUp } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 import { useCourses } from "@/hooks/useCourses";
+import { useSiteContent } from "@/hooks/useSiteContent";
 
 const PopularCourses = () => {
   const { data: courses, isLoading } = useCourses();
+  const { settings } = useSiteContent();
+  const s = settings.popular;
   const popular = courses?.filter((c) => c.popular) ?? [];
 
   if (isLoading) {
@@ -26,13 +29,13 @@ const PopularCourses = () => {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6">
               <TrendingUp className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Los más elegidos</span>
+              <span className="text-sm font-medium text-primary">{s.badge_text}</span>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Cursos más <span className="gradient-text">demandados</span>
+              {s.heading} <span className="gradient-text">{s.heading_highlight}</span>
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Descubrí los cursos que más eligen nuestros estudiantes para impulsar su carrera en tecnología.
+              {s.subheading}
             </p>
           </div>
         </ScrollReveal>
@@ -77,7 +80,7 @@ const PopularCourses = () => {
               to="/cursos"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-lg gradient-bg text-primary-foreground font-semibold hover:opacity-90 transition-opacity"
             >
-              Ver todos los cursos <ArrowRight className="w-4 h-4" />
+              {s.cta_label} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </ScrollReveal>

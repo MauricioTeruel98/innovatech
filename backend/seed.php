@@ -175,4 +175,166 @@ foreach ($courses as $course) {
     echo "$label {$course['title']}\n";
 }
 
+// ── Ajustes de contenido del sitio (site_settings) ──────────────────────────────
+// [section, key, value, type, label, help, sort_order]
+$settings = [
+    // General / marca
+    ['general', 'site_name', 'Instituto Innova Tech', 'text', 'Nombre del sitio', '', 0],
+    ['general', 'logo', '', 'image', 'Logo principal', 'Se usa en la barra de navegación y el pie. Vacío = logo por defecto.', 1],
+    ['general', 'logo_alt', 'Instituto Innova Tech', 'text', 'Texto alternativo del logo', '', 2],
+
+    // Hero
+    ['hero', 'badge_text', 'Formación en tecnología e IA', 'text', 'Texto de la insignia', '', 0],
+    ['hero', 'heading_part1', 'Impulsa tu futuro con ', 'text', 'Título — primera parte', 'Color sólido. Dejá el espacio final.', 1],
+    ['hero', 'heading_highlight', 'tecnología', 'text', 'Título — palabra destacada', 'Se muestra con degradado de color.', 2],
+    ['hero', 'subheading', 'Cursos y capacitaciones diseñados para prepararte en las habilidades más demandadas del mercado.', 'textarea', 'Subtítulo', '', 3],
+    ['hero', 'primary_cta_label', 'Ver cursos', 'text', 'Botón principal — texto', '', 4],
+    ['hero', 'primary_cta_url', '/cursos', 'url', 'Botón principal — enlace', '', 5],
+    ['hero', 'secondary_cta_label', 'Conocenos', 'text', 'Botón secundario — texto', '', 6],
+    ['hero', 'secondary_cta_url', '#nosotros', 'url', 'Botón secundario — enlace', '', 7],
+    ['hero', 'background_image', '', 'image', 'Imagen de fondo', 'Vacío = imagen por defecto.', 8],
+
+    // Inspiración (IA)
+    ['inspiration', 'title_highlight', 'La IA está transformando el mundo.', 'text', 'Título — parte destacada', 'Con degradado.', 0],
+    ['inspiration', 'title_rest', '¿Estás preparado para el cambio?', 'text', 'Título — parte normal', '', 1],
+    ['inspiration', 'quote', '«El futuro pertenece a quienes se preparan hoy. La inteligencia artificial no reemplaza personas, reemplaza a quienes no se adaptan.»', 'textarea', 'Cita destacada', '', 2],
+    ['inspiration', 'body_paragraph', 'En Instituto Innova Tech creemos que la educación tecnológica es la herramienta más poderosa para construir un futuro profesional sólido. Nuestros cursos están diseñados para que domines las tecnologías que están redefiniendo las industrias.', 'textarea', 'Párrafo descriptivo', '', 3],
+    ['inspiration', 'image', '', 'image', 'Imagen', 'Vacío = imagen por defecto.', 4],
+    ['inspiration', 'image_alt', 'Estudiante aprendiendo con inteligencia artificial', 'text', 'Texto alternativo de la imagen', '', 5],
+
+    // Modalidades (encabezado; las tarjetas se editan en "Modalidades")
+    ['modalities', 'heading_highlight', 'Modalidades', 'text', 'Título — palabra destacada', '', 0],
+    ['modalities', 'heading_rest', 'de estudio', 'text', 'Título — parte normal', '', 1],
+    ['modalities', 'subheading', 'Elegí la forma de aprender que mejor se adapte a tu estilo de vida y objetivos profesionales.', 'textarea', 'Subtítulo', '', 2],
+
+    // Sobre nosotros (encabezado; las tarjetas se editan en "Valores")
+    ['about', 'heading', 'Sobre', 'text', 'Título — parte normal', '', 0],
+    ['about', 'heading_highlight', 'nosotros', 'text', 'Título — palabra destacada', '', 1],
+    ['about', 'subheading', 'Somos un instituto especializado en formación tecnológica, comprometidos con la excelencia educativa y el desarrollo profesional de cada estudiante.', 'textarea', 'Subtítulo', '', 2],
+
+    // Testimonios (encabezado; las tarjetas se editan en "Testimonios")
+    ['testimonials', 'heading', 'Lo que dicen nuestros', 'text', 'Título — parte normal', '', 0],
+    ['testimonials', 'heading_highlight', 'estudiantes', 'text', 'Título — palabra destacada', '', 1],
+
+    // Equipo (encabezado; los miembros se editan en "Equipo")
+    ['team', 'heading', 'Nuestro', 'text', 'Título — parte normal', '', 0],
+    ['team', 'heading_highlight', 'equipo', 'text', 'Título — palabra destacada', '', 1],
+    ['team', 'subheading', 'Profesionales apasionados por la educación y la tecnología.', 'textarea', 'Subtítulo', '', 2],
+
+    // Cursos destacados (encabezado)
+    ['popular', 'badge_text', 'Los más elegidos', 'text', 'Texto de la insignia', '', 0],
+    ['popular', 'heading', 'Cursos más', 'text', 'Título — parte normal', '', 1],
+    ['popular', 'heading_highlight', 'demandados', 'text', 'Título — palabra destacada', '', 2],
+    ['popular', 'subheading', 'Descubrí los cursos que más eligen nuestros estudiantes para impulsar su carrera en tecnología.', 'textarea', 'Subtítulo', '', 3],
+    ['popular', 'cta_label', 'Ver todos los cursos', 'text', 'Botón — texto', '', 4],
+
+    // Desarrollo de software
+    ['softwaredev', 'icon', 'Code2', 'icon', 'Ícono', '', 0],
+    ['softwaredev', 'heading', 'Desarrollo de Software a medida', 'text', 'Título', '', 1],
+    ['softwaredev', 'description', 'Además de la formación, ofrecemos servicios profesionales de desarrollo de software. Creamos soluciones digitales personalizadas para tu negocio: aplicaciones web, móviles, sistemas de gestión y más.', 'textarea', 'Descripción', '', 2],
+    ['softwaredev', 'cta_label', 'Conocer más', 'text', 'Botón — texto', '', 3],
+    ['softwaredev', 'cta_url', 'https://example.com', 'url', 'Botón — enlace', 'Abre en una pestaña nueva.', 4],
+
+    // Barra de navegación (los ítems del desplegable de cursos se editan en "Menús")
+    ['navbar', 'home_label', 'Inicio', 'text', 'Inicio — texto', '', 0],
+    ['navbar', 'home_url', '/', 'url', 'Inicio — enlace', '', 1],
+    ['navbar', 'courses_label', 'Cursos', 'text', 'Cursos (desplegable) — texto', '', 2],
+    ['navbar', 'about_label', 'Quiénes somos', 'text', 'Quiénes somos — texto', '', 3],
+    ['navbar', 'about_url', '#nosotros', 'url', 'Quiénes somos — enlace', '', 4],
+    ['navbar', 'software_label', 'Desarrollo de software', 'text', 'Desarrollo de software — texto', '', 5],
+    ['navbar', 'software_url', 'https://example.com', 'url', 'Desarrollo de software — enlace', 'Abre en una pestaña nueva.', 6],
+    ['navbar', 'contact_label', 'Contacto', 'text', 'Contacto — texto', '', 7],
+    ['navbar', 'contact_url', '#contacto', 'url', 'Contacto — enlace', '', 8],
+
+    // Contacto
+    ['contact', 'heading', 'Contacto', 'text', 'Título', '', 0],
+    ['contact', 'subheading', '¿Tenés alguna consulta? Escribinos y te responderemos a la brevedad.', 'textarea', 'Subtítulo', '', 1],
+    ['contact', 'address', 'Tucumán, Argentina', 'text', 'Dirección', '', 2],
+    ['contact', 'email', 'info@institutoinnovatech.com', 'text', 'Email de contacto (visible)', '', 3],
+    ['contact', 'phone', '+54 381 465 3130', 'text', 'Teléfono', '', 4],
+    ['contact', 'map_embed_url', '', 'url', 'URL del mapa (Google Maps embed)', 'Opcional. Si la completás, se muestra un mapa embebido.', 5],
+    ['contact', 'notification_email', 'info@institutoinnovatech.com', 'text', 'Email para recibir mensajes', 'A esta dirección llegan los mensajes del formulario.', 6],
+    ['contact', 'success_message', 'Mensaje enviado. ¡Gracias por contactarnos!', 'text', 'Mensaje de confirmación', 'Se muestra al enviar el formulario.', 7],
+    ['contact', 'form_name_label', 'Nombre', 'text', 'Formulario — etiqueta Nombre', '', 8],
+    ['contact', 'form_email_label', 'Email', 'text', 'Formulario — etiqueta Email', '', 9],
+    ['contact', 'form_message_label', 'Mensaje', 'text', 'Formulario — etiqueta Mensaje', '', 10],
+    ['contact', 'form_submit_label', 'Enviar mensaje', 'text', 'Formulario — texto del botón', '', 11],
+
+    // Pie de página
+    ['footer', 'copyright_text', 'Instituto Innova Tech. Todos los derechos reservados.', 'text', 'Texto de derechos', 'El año se agrega automáticamente al inicio.', 0],
+    ['footer', 'developed_by_label', 'Desarrollado por', 'text', "Texto 'Desarrollado por'", '', 1],
+    ['footer', 'developed_by_name', 'InnovaLabs', 'text', 'Nombre del desarrollador', '', 2],
+];
+
+$stmt = $db->prepare(
+    "INSERT IGNORE INTO site_settings (section, setting_key, setting_value, type, label, help, sort_order)
+     VALUES (:section, :setting_key, :setting_value, :type, :label, :help, :sort_order)"
+);
+$nSettings = 0;
+foreach ($settings as $s) {
+    $stmt->execute([
+        ':section' => $s[0], ':setting_key' => $s[1], ':setting_value' => $s[2],
+        ':type' => $s[3], ':label' => $s[4], ':help' => $s[5], ':sort_order' => $s[6],
+    ]);
+    $nSettings += $stmt->rowCount();
+}
+echo "[OK]  $nSettings ajustes de contenido insertados (" . count($settings) . " definidos).\n";
+
+// ── Colecciones (solo si la tabla está vacía, para no duplicar) ─────────────────
+function seed_collection(PDO $db, string $table, string $columns, array $rows): void
+{
+    $count = (int) $db->query("SELECT COUNT(*) FROM $table")->fetchColumn();
+    if ($count > 0) {
+        echo "[SKIP] $table ya tiene datos.\n";
+        return;
+    }
+    $cols = array_map('trim', explode(',', $columns));
+    $placeholders = implode(', ', array_map(fn($c) => ":$c", $cols));
+    $stmt = $db->prepare("INSERT INTO $table ($columns) VALUES ($placeholders)");
+    foreach ($rows as $row) {
+        $params = [];
+        foreach ($cols as $i => $c) $params[":$c"] = $row[$i];
+        $stmt->execute($params);
+    }
+    echo "[OK]  " . count($rows) . " registros en $table.\n";
+}
+
+seed_collection($db, 'team_members', 'name, role, initials, sort_order', [
+    ['Alejandro Ruiz', 'Director General', 'AR', 0],
+    ['Sofía Torres', 'Directora Académica', 'ST', 1],
+    ['Martín López', 'Lead Instructor', 'ML', 2],
+    ['Valentina Díaz', 'Coordinadora de Cursos', 'VD', 3],
+]);
+
+seed_collection($db, 'testimonials', 'name, role, quote, rating, sort_order', [
+    ['María González', 'Desarrolladora Web', 'Gracias a Innova Tech pude hacer la transición a tecnología. Los cursos son prácticos y los instructores excelentes.', 5, 0],
+    ['Carlos Méndez', 'Data Analyst', 'La calidad del contenido y el acompañamiento de los profesores superaron mis expectativas. 100% recomendado.', 5, 1],
+    ['Laura Fernández', 'UX Designer', 'Empecé sin conocimientos técnicos y hoy trabajo en lo que me apasiona. El instituto me dio las herramientas que necesitaba.', 5, 2],
+    ['Diego Ramírez', 'Cloud Engineer', 'El curso de DevOps me permitió certificarme y conseguir un ascenso en menos de 6 meses. Totalmente vale la pena.', 5, 3],
+    ['Ana Torres', 'Data Scientist', 'Python para Ciencia de Datos cambió mi carrera. Los proyectos prácticos me dieron la confianza para aplicar a empresas top.', 5, 4],
+]);
+
+seed_collection($db, 'about_values', 'icon, title, description, sort_order', [
+    ['Target', 'Misión', 'Democratizar el acceso a educación tecnológica de calidad, preparando profesionales competitivos para el mercado actual.', 0],
+    ['Lightbulb', 'Innovación', 'Actualizamos constantemente nuestros programas para incluir las últimas tendencias y herramientas del sector.', 1],
+    ['TrendingUp', 'Resultados', 'Nuestros egresados aplican lo aprendido desde el primer día, con proyectos reales y habilidades demandadas.', 2],
+]);
+
+seed_collection($db, 'course_modalities', 'icon, title, description, sort_order', [
+    ['Monitor', 'Online', 'Aprende a tu ritmo desde cualquier lugar con acceso 24/7 a todo el material del curso.', 0],
+    ['Users', 'Presenciales', 'Clases prácticas con interacción directa y seguimiento personalizado de tu progreso.', 1],
+    ['Radio', 'En vivo', 'Sesiones en tiempo real con instructores expertos. Resuelve tus dudas al instante.', 2],
+    ['Building2', 'Para empresas', 'Programas de capacitación a medida para equipos corporativos y organizaciones.', 3],
+]);
+
+seed_collection($db, 'menu_links', 'location, label, url, target, enabled, sort_order', [
+    ['navbar_dropdown', 'A distancia', '/cursos', '_self', 1, 0],
+    ['navbar_dropdown', 'En vivo (próximamente)', '', '_self', 0, 1],
+    ['navbar_dropdown', 'Presencial (próximamente)', '', '_self', 0, 2],
+    ['navbar_dropdown', 'Para empresas (próximamente)', '', '_self', 0, 3],
+    ['social', 'Instagram', '#', '_blank', 1, 0],
+    ['social', 'LinkedIn', '#', '_blank', 1, 1],
+    ['social', 'YouTube', '#', '_blank', 1, 2],
+]);
+
 echo "\nSeed completado.\n";

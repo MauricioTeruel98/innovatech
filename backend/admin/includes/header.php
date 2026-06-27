@@ -1,3 +1,14 @@
+<?php
+// Contador de mensajes sin leer para la insignia del menú (defensivo).
+$unreadCount = 0;
+if (function_exists('getDB')) {
+    try {
+        $unreadCount = (int) getDB()->query("SELECT COUNT(*) FROM contact_messages WHERE is_read = 0")->fetchColumn();
+    } catch (Throwable $e) {
+        $unreadCount = 0;
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
 <head>
@@ -407,27 +418,35 @@
     </div>
 
     <nav class="sidebar-nav">
+        <?php
+        $navActive = $activePage ?? '';
+        $navItem = function (string $key, string $href, string $icon, string $label, string $badge = '') use ($navActive) {
+            $cls = ($navActive === $key) ? 'active' : '';
+            echo '<div class="nav-item"><a href="' . $href . '" class="' . $cls . '">'
+               . '<i class="bi ' . $icon . '"></i> ' . htmlspecialchars($label) . $badge . '</a></div>';
+        };
+        ?>
         <div class="nav-label">Principal</div>
-        <div class="nav-item">
-            <a href="<?= PANEL_URL ?>/index.php"
-               class="<?= ($activePage ?? '') === 'dashboard' ? 'active' : '' ?>">
-                <i class="bi bi-grid-1x2"></i> Dashboard
-            </a>
-        </div>
+        <?php $navItem('dashboard', PANEL_URL . '/index.php', 'bi-grid-1x2', 'Dashboard'); ?>
 
         <div class="nav-label" style="margin-top:12px">Contenido</div>
-        <div class="nav-item">
-            <a href="<?= PANEL_URL ?>/courses/index.php"
-               class="<?= ($activePage ?? '') === 'courses' ? 'active' : '' ?>">
-                <i class="bi bi-mortarboard"></i> Cursos
-            </a>
-        </div>
-        <div class="nav-item">
-            <a href="<?= PANEL_URL ?>/courses/create.php"
-               class="<?= ($activePage ?? '') === 'courses-create' ? 'active' : '' ?>">
-                <i class="bi bi-plus-circle"></i> Nuevo curso
-            </a>
-        </div>
+        <?php
+        $navItem('content',      PANEL_URL . '/content/index.php',      'bi-pencil-square', 'Contenido del sitio');
+        $navItem('courses',      PANEL_URL . '/courses/index.php',      'bi-mortarboard',   'Cursos');
+        $navItem('modalities',   PANEL_URL . '/modalities/index.php',   'bi-grid-3x3-gap',  'Modalidades');
+        $navItem('values',       PANEL_URL . '/values/index.php',       'bi-award',         'Valores');
+        $navItem('team',         PANEL_URL . '/team/index.php',         'bi-people',        'Equipo');
+        $navItem('testimonials', PANEL_URL . '/testimonials/index.php', 'bi-chat-quote',    'Testimonios');
+        $navItem('menu',         PANEL_URL . '/menu/index.php',         'bi-link-45deg',    'Menús y redes');
+        ?>
+
+        <div class="nav-label" style="margin-top:12px">Comunicación</div>
+        <?php
+        $badge = $unreadCount > 0
+            ? ' <span style="margin-left:auto;background:var(--gradient);color:#fff;border-radius:10px;padding:1px 8px;font-size:0.7rem;font-weight:700">' . $unreadCount . '</span>'
+            : '';
+        $navItem('messages', PANEL_URL . '/messages/index.php', 'bi-inbox', 'Mensajes', $badge);
+        ?>
     </nav>
 
     <div class="sidebar-footer">

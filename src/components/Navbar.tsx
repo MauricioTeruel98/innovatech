@@ -2,12 +2,21 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "@/assets/logo_innovatech.png";
+import logoDefault from "@/assets/logo_innovatech.png";
+import { useSiteContent } from "@/hooks/useSiteContent";
+import SmartLink from "./SmartLink";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [coursesOpen, setCoursesOpen] = useState(false);
   const location = useLocation();
+
+  const { settings, menu } = useSiteContent();
+  const nav = settings.navbar;
+  const logoSrc = settings.general.logo || logoDefault;
+  const logoAlt = settings.general.logo_alt || "Instituto Innova Tech";
+  const dropdown = menu.navbar_dropdown ?? [];
+  const enabledDropdown = dropdown.filter((d) => d.enabled);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -16,53 +25,57 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="Instituto Innova Tech" className="h-10" />
+            <img src={logoSrc} alt={logoAlt} className="h-10" />
           </Link>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/" className={`text-sm font-medium transition-colors hover:text-primary ${isActive("/") ? "text-primary" : "text-muted-foreground"}`}>
-              Inicio
+            <Link to={nav.home_url || "/"} className={`text-sm font-medium transition-colors hover:text-primary ${isActive(nav.home_url || "/") ? "text-primary" : "text-muted-foreground"}`}>
+              {nav.home_label}
             </Link>
 
             <div className="relative" onMouseEnter={() => setCoursesOpen(true)} onMouseLeave={() => setCoursesOpen(false)}>
               <button className="flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary">
-                Cursos <ChevronDown className="w-3 h-3" />
+                {nav.courses_label} <ChevronDown className="w-3 h-3" />
               </button>
               <AnimatePresence>
-                {coursesOpen && (
+                {coursesOpen && dropdown.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
                     className="absolute top-full left-0 mt-2 w-48 bg-card rounded-lg shadow-lg border border-border overflow-hidden"
                   >
-                    <Link to="/cursos" onClick={() => setCoursesOpen(false)} className="block px-4 py-3 text-sm hover:bg-muted hover:text-primary transition-colors">
-                      A distancia
-                    </Link>
-                    <span className="block px-4 py-3 text-sm cursor-not-allowed">
-                      En vivo (próximamente)
-                    </span>
-                    <span className="block px-4 py-3 text-sm cursor-not-allowed">
-                      Presencial (próximamente)
-                    </span>
-                    <span className="block px-4 py-3 text-sm cursor-not-allowed">
-                      Para empresas (próximamente)
-                    </span>
+                    {dropdown.map((item, i) =>
+                      item.enabled ? (
+                        <SmartLink
+                          key={`${item.label}-${i}`}
+                          to={item.url}
+                          onClick={() => setCoursesOpen(false)}
+                          className="block px-4 py-3 text-sm hover:bg-muted hover:text-primary transition-colors"
+                        >
+                          {item.label}
+                        </SmartLink>
+                      ) : (
+                        <span key={`${item.label}-${i}`} className="block px-4 py-3 text-sm cursor-not-allowed text-muted-foreground">
+                          {item.label}
+                        </span>
+                      )
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            <a href="#nosotros" className="text-sm font-medium transition-colors hover:text-primary">
-              Quiénes somos
-            </a>
-            <a href="https://example.com" target="_blank" rel="noopener noreferrer" className="text-sm font-medium transition-colors hover:text-primary">
-              Desarrollo de software
-            </a>
-            <a href="#contacto" className="text-sm font-medium transition-colors hover:text-primary">
-              Contacto
-            </a>
+            <SmartLink to={nav.about_url} className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+              {nav.about_label}
+            </SmartLink>
+            <SmartLink to={nav.software_url} className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+              {nav.software_label}
+            </SmartLink>
+            <SmartLink to={nav.contact_url} className="text-sm font-medium transition-colors hover:text-primary text-muted-foreground">
+              {nav.contact_label}
+            </SmartLink>
           </div>
 
           {/* Mobile toggle */}
@@ -81,11 +94,15 @@ const Navbar = () => {
               className="md:hidden overflow-hidden border-t border-border"
             >
               <div className="py-4 flex flex-col gap-3">
-                <Link to="/" onClick={() => setIsOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">Inicio</Link>
-                <Link to="/cursos" onClick={() => setIsOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">Cursos a distancia</Link>
-                <a href="#nosotros" onClick={() => setIsOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">Quiénes somos</a>
-                <a href="https://example.com" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">Desarrollo de software</a>
-                <a href="#contacto" onClick={() => setIsOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">Contacto</a>
+                <Link to={nav.home_url || "/"} onClick={() => setIsOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">{nav.home_label}</Link>
+                {enabledDropdown.map((item, i) => (
+                  <SmartLink key={`${item.label}-${i}`} to={item.url} onClick={() => setIsOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">
+                    {item.label}
+                  </SmartLink>
+                ))}
+                <SmartLink to={nav.about_url} onClick={() => setIsOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">{nav.about_label}</SmartLink>
+                <SmartLink to={nav.software_url} onClick={() => setIsOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">{nav.software_label}</SmartLink>
+                <SmartLink to={nav.contact_url} onClick={() => setIsOpen(false)} className="text-sm font-medium text-muted-foreground hover:text-primary px-2 py-1">{nav.contact_label}</SmartLink>
               </div>
             </motion.div>
           )}
